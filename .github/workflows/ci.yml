@@ -1,0 +1,52 @@
+name: C++ CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y cmake g++ clang clang-tidy cppcheck valgrind \
+              libgtest-dev libfmt-dev ninja-build
+
+      - name: Setup build directory
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DENABLE_ASAN=ON
+
+      - name: Build project
+        run: cmake --build build
+
+      - name: Run tests
+        run: cd build && ctest --output-on-failure
+
+      - name: Run clang-tidy
+        run: |
+          clang-tidy -p build $(find src -name '*.cpp') --warnings-as-errors=* || true
+
+      - name: Run cppcheck
+        run: |
+          cppcheck --enable=all --inconclusive --std=c++17 --suppress=missingIncludeSystem \
+                   --quiet src include || true
+
+      - name: Check clang-format compliance
+        run: |
+          if ! clang-format --dry-run --Werror $(find src include -name '*.cpp' -o -name '*.hpp'); then
+            echo "Code is not properly formatted. Run 'clang-format -i ...'"
+            exit 1
+          fi
+
+      - name: Run with AddressSanitizer
+        run: |
+          export ASAN_OPTIONS=detect_leaks=1
+          ./build/my_executable || true
