@@ -7,6 +7,7 @@
 
 #include <functional>
 #include <string>
+#include <optional>
 
 enum class UnitType { Temperature, Length, Mass };
 enum class Unit { Celsius, Fahrenheit, Kelvin, Meter, Kilometer, Kilogram, Pound };
