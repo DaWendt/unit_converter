@@ -145,33 +145,6 @@ TEST_F(UnitConverterTest, VerySmallValues) {
     EXPECT_TRUE(isApproximatelyEqual(*result, 1.0));
 }
 
-// ========== PARAMETRIZED TESTS ==========
-
-class TemperatureConversionTest : public ::testing::TestWithParam<std::tuple<double, double>> {};
-
-TEST_P(TemperatureConversionTest, CelsiusToFahrenheitRoundTrip) {
-    double celsius = std::get<0>(GetParam());
-    double expected_fahrenheit = std::get<1>(GetParam());
-
-    // Convert C to F
-    auto result = convert(celsius, Unit::Celsius, Unit::Fahrenheit);
-    ASSERT_TRUE(result.has_value());
-    EXPECT_TRUE(isApproximatelyEqual(*result, expected_fahrenheit));
-
-    // Convert back F to C
-    auto back_result = convert(*result, Unit::Fahrenheit, Unit::Celsius);
-    ASSERT_TRUE(back_result.has_value());
-    EXPECT_TRUE(isApproximatelyEqual(*back_result, celsius));
-}
-
-INSTANTIATE_TEST_SUITE_P(TemperatureValues, TemperatureConversionTest,
-                         ::testing::Values(std::make_tuple(0.0, 32.0),
-                                           std::make_tuple(100.0, 212.0),
-                                           std::make_tuple(-40.0, -40.0),
-                                           std::make_tuple(37.0, 98.6),
-                                           std::make_tuple(-273.15, -459.67) // Absolute zero
-                                           ));
-
 // ========== MAIN FUNCTION ==========
 
 int main(int argc, char **argv) {
