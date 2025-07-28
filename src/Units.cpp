@@ -15,6 +15,9 @@ const std::unordered_map<Unit, UnitInfo> unit_registry = {
     {Unit::Fahrenheit,
      {UnitType::Temperature, "°F", [](double x) { return (x - 32) * 5.0 / 9.0; }, // F to C
       [](double x) { return x * 9.0 / 5.0 + 32; }}},                              // C to F
+    {Unit::Kelvin,
+     {UnitType::Temperature, "K", [](double x) {return x - 273.15;}, // K to C
+     [](double x) {return x + 237.15;}}}, // C to K
 
     // Length (base: Meter)
     {Unit::Meter, {UnitType::Length, "m", [](double x) { return x; }, [](double x) { return x; }}},
