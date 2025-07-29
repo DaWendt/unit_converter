@@ -16,6 +16,11 @@ bool isApproximatelyEqual(double a, double b, double epsilon = 1e-9) {
     return std::abs(a - b) < epsilon;
 }
 
+// Helper function for rounding
+double roundToTwoDigits(double input){
+    return std::round(input * 100.0) / 100;
+}
+
 class UnitConverterTest : public ::testing::Test {
   protected:
     void SetUp() override {
@@ -57,7 +62,7 @@ TEST_F(UnitConverterTest, FahrenheitToCelsius) {
     EXPECT_TRUE(isApproximatelyEqual(*result, -40.0));
 }
 
-TEST_F(UnitConverterTest, CelsiusToKelvin){
+TEST_F(UnitConverterTest, CelsiusToKelvin) {
     auto result = convert(-273.15, Unit::Celsius, Unit::Kelvin);
     ASSERT_TRUE(result.has_value());
     ASSERT_TRUE(isApproximatelyEqual(*result, 0.0));
@@ -71,7 +76,7 @@ TEST_F(UnitConverterTest, CelsiusToKelvin){
     ASSERT_TRUE(isApproximatelyEqual(*result, -126.85));
 }
 
-TEST_F(UnitConverterTest, KelvinToCelsius){
+TEST_F(UnitConverterTest, KelvinToCelsius) {
     auto result = convert(273.15, Unit::Kelvin, Unit::Celsius);
     ASSERT_TRUE(result.has_value());
     ASSERT_TRUE(isApproximatelyEqual(*result, 0.0));
@@ -129,6 +134,46 @@ TEST_F(UnitConverterTest, SameLengthUnit) {
     result = convert(3.14, Unit::Kilometer, Unit::Kilometer);
     ASSERT_TRUE(result.has_value());
     EXPECT_TRUE(isApproximatelyEqual(*result, 3.14));
+}
+
+// ========== MASS CONVERSION TESTS ==========
+
+TEST_F(UnitConverterTest, KiloToPound) {
+    auto result = convert(0.0, Unit::Kilogram, Unit::Pound);
+    ASSERT_TRUE(result.has_value());
+    ASSERT_TRUE(isApproximatelyEqual(*result, 0.0));
+
+    result = convert(50.0, Unit::Kilogram, Unit::Pound);
+    ASSERT_TRUE(result.has_value());
+    ASSERT_TRUE(isApproximatelyEqual(*result, 110.23));
+
+    result = convert(-10.0, Unit::Kilogram, Unit::Pound);
+    ASSERT_TRUE(result.has_value());
+    ASSERT_TRUE(isApproximatelyEqual(roundToTwoDigits(*result), -22.05));
+}
+
+TEST_F(UnitConverterTest, PoundToKilo) {
+    auto result = convert(0.0, Unit::Pound, Unit::Kilogram);
+    ASSERT_TRUE(result.has_value());
+    ASSERT_TRUE(isApproximatelyEqual(*result, 0.0));
+
+    result = convert(50.0, Unit::Pound, Unit::Kilogram);
+    ASSERT_TRUE(result.has_value());
+    ASSERT_TRUE(isApproximatelyEqual(roundToTwoDigits(*result), 22.68));
+
+    result = convert(-10.0, Unit::Pound, Unit::Kilogram);
+    ASSERT_TRUE(result.has_value());
+    ASSERT_TRUE(isApproximatelyEqual(roundToTwoDigits(*result), -4.54));
+}
+
+TEST_F(UnitConverterTest, SameMassUnit) {
+    auto result = convert(10.0, Unit::Kilogram, Unit::Kilogram);
+    ASSERT_TRUE(result.has_value());
+    ASSERT_TRUE(isApproximatelyEqual(*result, 10.0));
+
+    result = convert(10.0, Unit::Pound, Unit::Pound);
+    ASSERT_TRUE(result.has_value());
+    ASSERT_TRUE(isApproximatelyEqual(*result, 10.0));
 }
 
 // ========== ERROR HANDLING TESTS ==========
