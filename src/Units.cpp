@@ -23,14 +23,14 @@ const std::unordered_map<Unit, UnitInfo> unit_registry = {
     {Unit::Meter, {UnitType::Length, "m", [](double x) { return x; }, [](double x) { return x; }}},
     {Unit::Kilometer,
      {UnitType::Length, "km", [](double x) { return x * 1000; }, // km to m
-      [](double x) { return x / 1000; }}},                     // m to km
+      [](double x) { return x / 1000; }}},                       // m to km
 
     // Mass (base: Kilogram)
-    {Unit::Kilogram, {UnitType::Mass, "kg", [](double x) {return x;},
-                     [](double x) {return x;}}},
-    {Unit::Pound, {UnitType::Mass, "lb", [](double x) {return x / 2.2046;},
-    [](double x) {return x * 2.2046;}}}
-};
+    {Unit::Kilogram,
+     {UnitType::Mass, "kg", [](double x) { return x; }, [](double x) { return x; }}},
+    {Unit::Pound,
+     {UnitType::Mass, "lb", [](double x) { return x / 2.2046; },
+      [](double x) { return x * 2.2046; }}}};
 
 std::optional<double> convert(double value, Unit from, Unit to) {
     auto from_info = unit_registry.find(from);

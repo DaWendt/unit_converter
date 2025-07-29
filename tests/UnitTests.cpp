@@ -17,7 +17,7 @@ bool isApproximatelyEqual(double a, double b, double epsilon = 1e-9) {
 }
 
 // Helper function for rounding
-double roundToTwoDigits(double input){
+double roundToTwoDigits(double input) {
     return std::round(input * 100.0) / 100;
 }
 
